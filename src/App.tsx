@@ -4,7 +4,7 @@ import UserRegistration from "./components/UserRegistration";
 import type { UserData } from "./types/user";
 
 function App() {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [, setUserData] = useState<UserData | null>(null);
 
   const handleRegistration = (userData: UserData) => {
     setUserData(userData);
