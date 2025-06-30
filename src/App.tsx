@@ -1,12 +1,20 @@
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import UserRegistration from "./components/UserRegistration";
+import type { UserData } from "./types/user";
 
 function App() {
+  const [, setUserData] = useState<UserData | null>(null);
 
+  const handleRegistration = (userData: UserData) => {
+    setUserData(userData);
+    console.log("User registered:", userData);
+  };
   return (
-    <h1 className="text-3xl font-bold underline">
-      Match Finder
-    </h1>
-  )
+    <div>
+      <UserRegistration onComplete={handleRegistration} />
+    </div>
+  );
 }
 
-export default App
+export default App;
