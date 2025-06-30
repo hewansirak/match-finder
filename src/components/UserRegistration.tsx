@@ -159,8 +159,6 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
                 </option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="non-binary">Non-binary</option>
-                <option value="prefer-not-to-say">Prefer not to say</option>
               </select>
               {/* Custom dropdown arrow */}
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
