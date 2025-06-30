@@ -1,5 +1,7 @@
 export interface UserData {
   username: string;
-  age: number;
+  dob: Date;
   gender: string;
+  avatar?: string;
+  bio?: string;
 }
