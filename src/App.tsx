@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import UserRegistration from "./components/UserRegistration";
 import type { UserData } from "./types/user";
