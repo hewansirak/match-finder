@@ -4,6 +4,7 @@ import UserRegistration from "./components/UserRegistration";
 import type { UserData } from "./types/user";
 import Quiz from "./components/Quiz";
 import type { QuizAnswers } from "./types/quiz";
+import NoMatch from "./components/NoMatch";
 
 function App() {
   const [step, setStep] = useState<'registration' | 'quiz' | 'results' | 'no-match'>('registration');
@@ -19,6 +20,14 @@ function App() {
     setQuizAnswers(answers);
     // console.log('Quiz Answers:', answers);
     // console.log('User Data:', userData);
+
+    setStep('no-match');
+  };
+
+  const resetApp = () => {
+    setStep('registration');
+    setUserData(null);
+    setQuizAnswers({});
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-red-50 to-rose-100">
@@ -27,6 +36,9 @@ function App() {
       )}
       {step === 'quiz' && userData && (
         <Quiz userData={userData} onComplete={handleQuizComplete} />
+      )}
+      {step === 'no-match' && (
+        <NoMatch onReset={resetApp} />
       )}
     </div>
   );
