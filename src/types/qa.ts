@@ -10,6 +10,7 @@ export interface Option {
   question_id: string;
   value: string;
   label: string;
+  icon: string;
 }
 
 export interface Answer {
