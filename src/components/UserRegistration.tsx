@@ -28,8 +28,8 @@ const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (formData.username && formData.dob && formData.gender) {
-    // Save to Supabase directly
-    const { error } = await supabase
+    // Save to Supabase directly + RETURN new row
+    const { data, error } = await supabase
       .from('users')
       .insert([
         {
@@ -38,15 +38,17 @@ const handleSubmit = async (e: React.FormEvent) => {
           gender: formData.gender,
           avatar: formData.avatar || null,
           bio: formData.bio || null,
-        }
-      ]);
+        },
+      ])
+      .select()
+      .single(); 
 
     if (error) {
       console.error('Error saving to Supabase:', error);
     } else {
-      console.log('Saved!');
-      // Optionally clear form or show success
+      console.log('Saved!', data);
       onComplete({
+        id: data.id, 
         username: formData.username,
         dob: new Date(formData.dob),
         gender: formData.gender,
@@ -56,7 +58,6 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
   }
 };
-
 
   const handleFocus = (fieldName: string) => {
     setFocusedField(fieldName);
