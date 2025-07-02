@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Heart, Sparkles, User, Calendar, Users, FileText } from "lucide-react";
 import type { UserData } from "../types/user";
+import { supabase } from '../lib/supabaseClient';
 
 interface Props {
   onComplete: (data: UserData) => void;
@@ -23,9 +24,28 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
     "🌈", "⭐", "🎪", "🎯", "💧"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.username && formData.dob && formData.gender) {
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (formData.username && formData.dob && formData.gender) {
+    // Save to Supabase directly
+    const { error } = await supabase
+      .from('users')
+      .insert([
+        {
+          username: formData.username,
+          dob: new Date(formData.dob).toISOString(),
+          gender: formData.gender,
+          avatar: formData.avatar || null,
+          bio: formData.bio || null,
+        }
+      ]);
+
+    if (error) {
+      console.error('Error saving to Supabase:', error);
+    } else {
+      console.log('Saved!');
+      // Optionally clear form or show success
       onComplete({
         username: formData.username,
         dob: new Date(formData.dob),
@@ -34,7 +54,9 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
         bio: formData.bio || undefined,
       });
     }
-  };
+  }
+};
+
 
   const handleFocus = (fieldName: string) => {
     setFocusedField(fieldName);
