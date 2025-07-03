@@ -2,75 +2,88 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
-import { questions } from "../src/data/questions"; // Use static questions, not async getQuestions
 import Quiz from "../src/components/Quiz";
 
-// Make sure mockUserData matches your UserData type
-const mockUserData = {
-  username: "Alice",
-  dob: "2000-01-01",
-  gender: "female",
-  avatar: "",
-  bio: "",
-};
+vi.mock("../src/lib/api", () => {
+  const mockQuestions = [
+    {
+      id: "q1",
+      text: "What's your favorite color?",
+      options: [
+        { id: "o1", label: "Red", icon: "🟥" },
+        { id: "o2", label: "Blue", icon: "🟦" },
+      ],
+    },
+    {
+      id: "q2",
+      text: "Pick a pet:",
+      options: [
+        { id: "o3", label: "Dog", icon: "🐶" },
+        { id: "o4", label: "Cat", icon: "🐱" },
+      ],
+    },
+  ];
+  return {
+    getQuestions: vi.fn().mockResolvedValue(mockQuestions),
+    saveUserAnswers: vi.fn().mockResolvedValue({}),
+  };
+});
 
+// Now import after the mock
 describe("Quiz Component", () => {
   const onComplete = vi.fn();
+  const userId = "user-123";
 
   beforeEach(() => {
     onComplete.mockClear();
   });
 
-  it("renders the first question and options", () => {
-    render(<Quiz userData={mockUserData} onComplete={onComplete} />);
-    // Checks for greeting with username
-    expect(screen.getByText(/Hi Alice/i)).toBeInTheDocument();
-    // Checks for question text
-    expect(screen.getByText(questions[0].question)).toBeInTheDocument();
-    // Checks for all options of the first question
-    questions[0].options.forEach((option) => {
-      expect(screen.getByText(option.label)).toBeInTheDocument();
-    });
-    // Shows progress
-    expect(screen.getByText(/1 of \d+/i)).toBeInTheDocument();
+  it("renders the first question and options", async () => {
+    render(<Quiz userId={userId} onComplete={onComplete} />);
+    // Wait for loading to finish
+    expect(screen.getByText(/Loading questions/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText("What's your favorite color?")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Red")).toBeInTheDocument();
+    expect(screen.getByText("Blue")).toBeInTheDocument();
+    expect(screen.getByText(/1 of 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hi! 👋/i)).toBeInTheDocument();
   });
 
   it("highlights the selected option and advances to next question", async () => {
-    render(<Quiz userData={mockUserData} onComplete={onComplete} />);
-    const firstOption = screen.getByText(questions[0].options[0].label);
+    render(<Quiz userId={userId} onComplete={onComplete} />);
+    expect(
+      await screen.findByText("What's your favorite color?")
+    ).toBeInTheDocument();
+    const firstOption = screen.getByText("Red");
     await userEvent.click(firstOption);
-    // After delay, next question should appear
-    expect(await screen.findByText(questions[1].question)).toBeInTheDocument();
+    expect(await screen.findByText("Pick a pet:")).toBeInTheDocument();
   });
 
   it("calls onComplete with answers after last question", async () => {
-  render(<Quiz userData={mockUserData} onComplete={onComplete} />);
-  // Answer all questions
-  for (let i = 0; i < questions.length; i++) {
-    const option = screen.getByText(questions[i].options[0].label);
-    await userEvent.click(option);
-    if (i < questions.length - 1) {
-      expect(
-        await screen.findByText(questions[i + 1].question)
-      ).toBeInTheDocument();
-    }
-  }
-
-  // Wait for onComplete to be called
-  await waitFor(() => {
-    expect(onComplete).toHaveBeenCalledTimes(1);
+    render(<Quiz userId={userId} onComplete={onComplete} />);
+    await userEvent.click(await screen.findByText("Red"));
+    await userEvent.click(await screen.findByText("Dog"));
+    await waitFor(() => {
+      expect(onComplete).toHaveBeenCalledTimes(1);
+    });
+    expect(onComplete.mock.calls[0][0]).toMatchObject({
+      q1: "o1",
+      q2: "o3",
+    });
   });
 
-  expect(onComplete.mock.calls[0][0]).toMatchObject(
-    Object.fromEntries(questions.map((q) => [q.id, q.options[0].value]))
-  );
-}, 10000);
-
   it("shows progress bar updating as questions advance", async () => {
-    render(<Quiz userData={mockUserData} onComplete={onComplete} />);
-    for (let i = 0; i < questions.length; i++) {
-      const progressBar = screen.getByTestId("progress-bar");
-      await userEvent.click(progressBar);
-    }
+    render(<Quiz userId={userId} onComplete={onComplete} />);
+    expect(
+      await screen.findByText("What's your favorite color?")
+    ).toBeInTheDocument();
+    const progressBar = screen.getByTestId("progress-bar");
+    expect(progressBar.style.width).toBe("50%");
+    await userEvent.click(screen.getByText("Red"));
+    expect(await screen.findByText("Pick a pet:")).toBeInTheDocument();
+    const progressBar2 = screen.getByTestId("progress-bar");
+    expect(progressBar2.style.width).toBe("100%");
   });
 });
