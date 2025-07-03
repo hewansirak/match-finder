@@ -13,7 +13,7 @@ vi.mock("../src/lib/supabaseClient", () => ({
 }));
 
 describe("UserRegistration UI", () => {
-  let onComplete: any;
+  let onComplete
 
   beforeEach(() => {
     onComplete = vi.fn();
