@@ -28,7 +28,7 @@ export async function findBestMatch(userId: number) {
 
   const bestMatch = matchData?.[0];
 
-  if (bestMatch && bestMatch.match_count >= 6) {
+  if (bestMatch && bestMatch.match_count >= 8) {
     return bestMatch; // Found!
   } else {
     return null; // No match found
