@@ -20,8 +20,8 @@ interface Props {
   onReset: () => void;
 }
 
-const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
-  const [showMatch, setShowMatch] = useState(false);
+const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
+  const [ , setShowMatch] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
   const [compatibilityScore, setCompatibilityScore] = useState(0); // Will be set by actual match
   const [matchedUserData, setMatchedUserData] = useState<UserData | null>(null);
@@ -74,12 +74,7 @@ const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
   const userAge = calculateAge(userData.dob);
   const userZodiacSign = calculateZodiacSign(userData.dob);
 
-  // Prepare user interests from quiz answers (these are still dummy, as quiz answers are not directly linked to interests in UserData)
-  const userInterests = [
-    quizAnswers.hobby || "Reading",
-    quizAnswers.lifestyle || "Adventure",
-    quizAnswers.beverage || "Coffee"
-  ];
+
 
   if (loadingMatch) {
     return (
@@ -131,10 +126,6 @@ const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
 
   const matchAge = calculateAge(matchedUserData.dob);
   const matchZodiacSign = calculateZodiacSign(matchedUserData.dob);
-
-  // Dummy interests for the matched user, as they are not available from the database
-  const matchInterests = ["Music", "Travel", "Cooking"];
-
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-red-500">

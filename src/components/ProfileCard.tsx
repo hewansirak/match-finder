@@ -1,6 +1,6 @@
 // ProfileCard.tsx
 import React from "react";
-import { Star, Sparkles, Heart } from "lucide-react"; 
+import { Star, Sparkles } from "lucide-react"; 
 
 interface ProfileCardProps {
   name: string;
