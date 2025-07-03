@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React from 'react';
+import { useState } from "react";
 import { Heart, Sparkles, User, Calendar, Users, FileText } from "lucide-react";
 import type { UserData } from "../types/user";
+import { supabase } from '../lib/supabaseClient';
 
 interface Props {
   onComplete: (data: UserData) => void;
@@ -23,10 +25,31 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
     "🌈", "⭐", "🎪", "🎯", "💧"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.username && formData.dob && formData.gender) {
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (formData.username && formData.dob && formData.gender) {
+    // Save to Supabase directly + RETURN new row
+    const { data, error } = await supabase
+      .from('users')
+      .insert([
+        {
+          username: formData.username,
+          dob: new Date(formData.dob).toISOString(),
+          gender: formData.gender,
+          avatar: formData.avatar || null,
+          bio: formData.bio || null,
+        },
+      ])
+      .select()
+      .single(); 
+
+    if (error) {
+      console.error('Error saving to Supabase:', error);
+    } else {
+      console.log('Saved!', data);
       onComplete({
+        id: data.id, 
         username: formData.username,
         dob: new Date(formData.dob),
         gender: formData.gender,
@@ -34,7 +57,8 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
         bio: formData.bio || undefined,
       });
     }
-  };
+  }
+};
 
   const handleFocus = (fieldName: string) => {
     setFocusedField(fieldName);
@@ -57,7 +81,7 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
         <div className="relative mb-6 text-center">
           <div className="flex justify-center mb-4">
             <div className="relative heartbeat">
-              <Heart className="w-12 h-12 text-red-500 fill-current drop-shadow-lg" />
+              <Heart data-testid="lucide-heart" className="w-12 h-12 text-red-500 fill-current drop-shadow-lg" />
               <div className="absolute inset-0 w-12 h-12 bg-red-400 rounded-full opacity-20 animate-ping"></div>
             </div>
           </div>
@@ -82,12 +106,16 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name Field */}
             <div className="relative group">
-              <label className="block text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+              <label
+                htmlFor="username"
+                className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5"
+              >
                 <User className="w-3.5 h-3.5 text-pink-500" />
                 Your Name
               </label>
               <div className="relative">
                 <input
+                  id="username"
                   type="text"
                   value={formData.username}
                   onChange={(e) =>
@@ -108,12 +136,13 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
 
             {/* Date of Birth Field */}
             <div className="relative group">
-              <label className="block text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+              <label htmlFor="dob" className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-pink-500" />
                 Date of Birth
               </label>
               <div className="relative">
                 <input
+                  id="dob"
                   type="date"
                   value={formData.dob}
                   onChange={(e) =>
@@ -126,7 +155,13 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
                       ? "border-pink-400 shadow-lg shadow-pink-200/50 transform scale-[1.01]"
                       : "border-pink-200 hover:border-pink-300"
                   }`}
-                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 18)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
                   required
                 />
               </div>
@@ -135,12 +170,13 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
 
           {/* Gender Field */}
           <div className="relative group">
-            <label className="block text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+            <label htmlFor="gender" className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-pink-500" />
               Gender
             </label>
             <div className="relative">
               <select
+                id="gender"
                 value={formData.gender}
                 onChange={(e) =>
                   setFormData({ ...formData, gender: e.target.value })
@@ -181,15 +217,18 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
 
           {/* Avatar Emoji Selection */}
           <div className="relative group">
-            <label className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+            <label htmlFor="avatar" className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-pink-500" />
-              Choose Your Avatar <span className="text-gray-400">(optional)</span>
+              Choose Your Avatar{" "}
+              <span className="text-gray-400">(optional)</span>
             </label>
             <div className="grid grid-cols-5 gap-3 p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl border-2 border-pink-200">
               {emojiOptions.map((emoji, index) => (
                 <button
+                  id="avatar"
                   key={index}
                   type="button"
+                  data-testid="avatar-emoji"
                   onClick={() => handleEmojiSelect(emoji)}
                   className={`cursor-pointer w-12 h-12 text-2xl rounded-xl transition-all duration-300 transform hover:scale-110 hover:shadow-lg ${
                     formData.avatar === emoji
@@ -205,12 +244,13 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
 
           {/* Bio Field */}
           <div className="relative group">
-            <label className="block text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+            <label htmlFor="bio" className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-pink-500" />
               About You <span className="text-gray-400">(optional)</span>
             </label>
             <div className="relative">
               <textarea
+                id="bio"
                 value={formData.bio}
                 onChange={(e) =>
                   setFormData({ ...formData, bio: e.target.value })
@@ -248,9 +288,9 @@ const UserRegistration: React.FC<Props> = ({ onComplete }) => {
         {/* Bottom decorative text */}
         <div className="mt-4 text-center">
           <p className="flex items-center justify-center gap-1 text-xs text-gray-500">
-            <Heart className="w-2.5 h-2.5 text-pink-400 fill-current" />
+            <Heart data-testid="lucide-heart" className="w-2.5 h-2.5 text-pink-400 fill-current" />
             Love is just a click away
-            <Heart className="w-2.5 h-2.5 text-pink-400 fill-current" />
+            <Heart data-testid="lucide-heart" className="w-2.5 h-2.5 text-pink-400 fill-current" />
           </p>
         </div>
       </div>
