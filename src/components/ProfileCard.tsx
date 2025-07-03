@@ -1,4 +1,3 @@
-// ProfileCard.tsx
 import React from "react";
 import { Star, Sparkles } from "lucide-react"; 
 
@@ -6,8 +5,6 @@ interface ProfileCardProps {
   name: string;
   age: number;
   gender?: string;
-  // image: string; // Removed
-  // interests: string[]; // Removed
   zodiac: string;
   isOnline?: boolean;
   className?: string;
@@ -17,14 +14,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
   age,
   gender,
-  // image, // Removed
-  // interests, // Removed
   zodiac,
   isOnline = true,
   className = "",
 }) => {
   return (
-    <div className={`relative group ${className}`}>
+    <div className={`relative group ${className}`} data-testid="profile-card">
       {/* Animated Background Glow */}
       <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500 animate-pulse"></div>
 
@@ -63,11 +58,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Camera Icon Overlay (Removed as image is removed) */}
-            {/* <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <Camera className="w-6 h-6 text-white" />
-            </div> */}
           </div>
 
           {/* Verified Badge */}
@@ -104,24 +94,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               </span>
             </div>
           </div>
-
-          {/* Interests (Removed as interests are removed) */}
-          {/* <div className="space-y-3">
-            <div className="flex items-center justify-center gap-2 text-white/70 text-sm">
-              <Heart className="w-4 h-4" />
-              <span className="font-medium">Interests</span>
-            </div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {interests.map((interest, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-medium rounded-full border border-white/20 shadow-sm hover:bg-white/25 transition-colors duration-200"
-                >
-                  {interest}
-                </span>
-              ))}
-            </div>
-          </div> */}
         </div>
 
         {/* Bottom Gradient */}

@@ -7,10 +7,25 @@ import React from "react";
 vi.mock("../src/lib/supabaseClient", () => ({
   supabase: {
     from: () => ({
-      insert: vi.fn().mockResolvedValue({ error: null }),
+      insert: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
+            data: {
+              id: 123, // or any dummy id
+              username: "Alice",
+              dob: new Date("2000-01-01").toISOString(),
+              gender: "female",
+              avatar: null,
+              bio: null,
+            },
+            error: null,
+          }),
+        }),
+      }),
     }),
   },
 }));
+
 
 describe("UserRegistration UI", () => {
   let onComplete
