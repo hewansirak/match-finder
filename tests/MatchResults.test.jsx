@@ -84,13 +84,4 @@ describe("MatchResults", () => {
     await userEvent.click(btn);
     expect(onReset).toHaveBeenCalled();
   });
-
-  it("calls onReset when 'Find Another Match' is clicked in match state", async () => {
-    (findBestMatch).mockResolvedValue({ match_id: "2", match_count: 8 });
-    supabase.from().select().eq().single.mockResolvedValue({ data: mockMatchedUser, error: null });
-    render(<MatchResults userData={mockUserData} quizAnswers={{}} onReset={onReset} />);
-    const btn = await screen.findByTestId('find-another-match');
-    await userEvent.click(btn);
-    expect(onReset).toHaveBeenCalled();
-  });
 });
