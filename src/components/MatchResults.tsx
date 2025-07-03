@@ -13,6 +13,7 @@ import { calculateAge, calculateZodiacSign } from "../utils/dateUtils";
 import ProfileCard from "../components/ProfileCard";
 import { findBestMatch } from "../lib/match";
 import { supabase } from '../lib/supabaseClient'; 
+import NoMatch from "./NoMatch";
 
 interface Props {
   userData: UserData;
@@ -105,22 +106,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
 
   if (noMatchFound || !matchedUserData) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-800 to-black">
-        <div className="text-center text-white max-w-md">
-          <div className="text-8xl mb-6">💔</div>
-          <h1 className="text-4xl font-bold mb-4">No Match Found</h1>
-          <p className="text-gray-300 mb-8">
-            Don't worry, love comes when you least expect it...
-          </p>
-          <button
-            onClick={onReset}
-            className="w-full bg-white text-gray-800 font-bold py-4 px-6 rounded-2xl hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
-          >
-            <RotateCcw className="w-5 h-5" />
-            Try Again
-          </button>
-        </div>
-      </div>
+      <NoMatch onReset={onReset} />
     );
   }
 
@@ -263,6 +249,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
 
           <button
             onClick={onReset}
+            data-testid="find-another-match"
             className="flex items-center justify-center w-full gap-3 px-8 py-4 transition-all duration-300 transform border group text-white/90 hover:text-white border-white/30 rounded-2xl hover:bg-white/10 hover:scale-105"
           >
             <RotateCcw className="w-5 h-5 transition-transform duration-500 group-hover:rotate-180" />
