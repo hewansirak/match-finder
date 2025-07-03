@@ -40,6 +40,7 @@ const Quiz: React.FC<Props> = ({ userData, onComplete }) => {
           
           <div className="w-full h-3 mb-6 bg-pink-100 rounded-full">
             <div 
+              data-testid="progress-bar"
               className="h-3 transition-all duration-500 ease-out rounded-full bg-gradient-to-r from-pink-500 to-red-500"
               style={{ width: `${progress}%` }}
             />
