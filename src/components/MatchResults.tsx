@@ -114,6 +114,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
           </p>
           <button
             onClick={onReset}
+            data-testid="find-another-match"
             className="w-full bg-white text-gray-800 font-bold py-4 px-6 rounded-2xl hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
           >
             <RotateCcw className="w-5 h-5" />
@@ -263,6 +264,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
 
           <button
             onClick={onReset}
+            data-testid="find-another-match"
             className="flex items-center justify-center w-full gap-3 px-8 py-4 transition-all duration-300 transform border group text-white/90 hover:text-white border-white/30 rounded-2xl hover:bg-white/10 hover:scale-105"
           >
             <RotateCcw className="w-5 h-5 transition-transform duration-500 group-hover:rotate-180" />
