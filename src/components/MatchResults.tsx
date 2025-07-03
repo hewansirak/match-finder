@@ -1,3 +1,4 @@
+// MatchResults.tsx
 import React, { useState, useEffect } from "react";
 import {
   Heart,
@@ -10,7 +11,8 @@ import type { QuizAnswers } from "../types/quiz";
 import type { UserData } from "../types/user";
 import { calculateAge, calculateZodiacSign } from "../utils/dateUtils";
 import ProfileCard from "../components/ProfileCard";
-import { dummyMatches } from "../data/dummyMatches";
+import { findBestMatch } from "../lib/match";
+import { supabase } from '../lib/supabaseClient'; 
 
 interface Props {
   userData: UserData;
@@ -18,33 +20,63 @@ interface Props {
   onReset: () => void;
 }
 
-const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
-  const [showMatch, setShowMatch] = useState(false);
+const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
+  const [ , setShowMatch] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
-  const [compatibilityScore] = useState(Math.floor(Math.random() * 20) + 80);
-  const match = dummyMatches[Math.floor(Math.random() * dummyMatches.length)];
+  const [compatibilityScore, setCompatibilityScore] = useState(0); // Will be set by actual match
+  const [matchedUserData, setMatchedUserData] = useState<UserData | null>(null);
+  const [loadingMatch, setLoadingMatch] = useState(true);
+  const [noMatchFound, setNoMatchFound] = useState(false);
+
+  useEffect(() => {
+    const fetchMatch = async () => {
+      setLoadingMatch(true);
+      setNoMatchFound(false);
+      try {
+        const bestMatch = await findBestMatch(parseInt(userData.id));
+
+        if (bestMatch && bestMatch.match_id) {
+          // Fetch the full user data for the matched user
+          const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', bestMatch.match_id)
+            .single();
+
+          if (error) {
+            console.error('Error fetching matched user data:', error);
+            setNoMatchFound(true);
+          } else if (data) {
+            setMatchedUserData(data);
+            setCompatibilityScore(bestMatch.match_count * 10); 
+            setShowMatch(true);
+            setTimeout(() => setAnimateScore(true), 800);
+          } else {
+            setNoMatchFound(true);
+          }
+        } else {
+          setNoMatchFound(true);
+        }
+      } catch (error) {
+        console.error('Error in finding best match:', error);
+        setNoMatchFound(true);
+      } finally {
+        setLoadingMatch(false);
+      }
+    };
+
+    if (userData?.id) {
+      fetchMatch();
+    }
+  }, [userData.id]);
 
   // Calculate ages using the utility function
   const userAge = calculateAge(userData.dob);
-  const matchAge = calculateAge(match.dob);
-  const userZodiacSign = calculateZodiacSign(userData.dob)
+  const userZodiacSign = calculateZodiacSign(userData.dob);
 
-  // Prepare user interests from quiz answers
-  const userInterests = [
-    quizAnswers.hobby || "Reading",
-    quizAnswers.lifestyle || "Adventure", 
-    quizAnswers.beverage || "Coffee"
-  ];
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowMatch(true);
-      setTimeout(() => setAnimateScore(true), 800);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
-  if (!showMatch) {
+  if (loadingMatch) {
     return (
       <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-purple-600 via-pink-600 to-red-500">
         <div className="text-center text-white">
@@ -70,6 +102,30 @@ const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
       </div>
     );
   }
+
+  if (noMatchFound || !matchedUserData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-800 to-black">
+        <div className="text-center text-white max-w-md">
+          <div className="text-8xl mb-6">💔</div>
+          <h1 className="text-4xl font-bold mb-4">No Match Found</h1>
+          <p className="text-gray-300 mb-8">
+            Don't worry, love comes when you least expect it...
+          </p>
+          <button
+            onClick={onReset}
+            className="w-full bg-white text-gray-800 font-bold py-4 px-6 rounded-2xl hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+          >
+            <RotateCcw className="w-5 h-5" />
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const matchAge = calculateAge(matchedUserData.dob);
+  const matchZodiacSign = calculateZodiacSign(matchedUserData.dob);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-red-500">
@@ -105,9 +161,9 @@ const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
               name={userData.username}
               age={userAge}
               gender={userData.gender}
-              image={match.image} // Using match image as placeholder for user
-              interests={userInterests}
-              zodiac={userZodiacSign} // Using match zodiac as placeholder
+              // image={userData.avatar || "https://via.placeholder.com/150"} // Removed image
+              // interests={userInterests} // Removed interests
+              zodiac={userZodiacSign}
               isOnline={true}
             />
 
@@ -119,7 +175,7 @@ const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
                   <Heart className="w-10 h-10 text-red-500 fill-current animate-heartbeat" />
                 </div>
               </div>
-              
+
               {/* Connection Lines */}
               <div className="hidden w-12 h-1 rounded-full lg:block bg-gradient-to-r from-red-400 to-pink-500 animate-pulse"></div>
               <div className="w-1 h-12 rounded-full lg:hidden bg-gradient-to-b from-red-400 to-pink-500 animate-pulse"></div>
@@ -129,11 +185,12 @@ const MatchResults: React.FC<Props> = ({ userData, quizAnswers, onReset }) => {
 
             {/* Match Profile Card */}
             <ProfileCard
-              name={match.name}
+              name={matchedUserData.username}
               age={matchAge}
-              image={match.image}
-              interests={match.interests}
-              zodiac={match.zodiac}
+              gender={matchedUserData.gender}
+              // image={matchedUserData.avatar || "https://via.placeholder.com/150"} // Removed image
+              // interests={matchInterests} // Removed interests
+              zodiac={matchZodiacSign}
               isOnline={true}
             />
           </div>
