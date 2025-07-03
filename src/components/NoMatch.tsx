@@ -9,7 +9,7 @@ const NoMatch: React.FC<Props> = ({ onReset }) => {
   useEffect(() => {
     // Auto-redirect to Akon's Lonely song
     const timer = setTimeout(() => {
-      window.open('https://youtu.be/6EEW-9NDM5k?si=bjkiywHlQUy6F7ad', '_blank');
+      window.open('https://youtu.be/6EEW-9NDM5k?si=ojJV7mCX6hopqXE2&t=35', '_blank'); 
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -23,10 +23,10 @@ const NoMatch: React.FC<Props> = ({ onReset }) => {
         <p className="text-gray-300 mb-8">
           Don't worry, love comes when you least expect it...
         </p>
-        
+
         <div className="space-y-4">
           <a
-            href="https://youtu.be/6EEW-9NDM5k?si=bjkiywHlQUy6F7ad"
+            href="https://youtu.be/6EEW-9NDM5k?si=ojJV7mCX6hopqXE2&t=35" 
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-red-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"

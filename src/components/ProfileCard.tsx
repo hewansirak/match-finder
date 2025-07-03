@@ -1,12 +1,13 @@
+// ProfileCard.tsx
 import React from "react";
-import { Star, Sparkles, Camera, Heart } from "lucide-react";
+import { Star, Sparkles, Heart } from "lucide-react"; 
 
 interface ProfileCardProps {
   name: string;
   age: number;
   gender?: string;
-  image: string;
-  interests: string[];
+  // image: string; // Removed
+  // interests: string[]; // Removed
   zodiac: string;
   isOnline?: boolean;
   className?: string;
@@ -16,8 +17,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
   age,
   gender,
-  image,
-  interests,
+  // image, // Removed
+  // interests, // Removed
   zodiac,
   isOnline = true,
   className = "",
@@ -26,10 +27,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     <div className={`relative group ${className}`}>
       {/* Animated Background Glow */}
       <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500 animate-pulse"></div>
-      
+
       {/* Main Card Container */}
       <div className="relative w-80 h-fit bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden transition-all duration-500 group-hover:scale-105 group-hover:shadow-pink-500/25">
-        
+
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-cyan-500/10"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
@@ -40,19 +41,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <div className="absolute top-12 right-12 w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{animationDelay: '0.5s'}}></div>
         <div className="absolute top-20 right-8 w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
 
-        {/* Profile Image Section */}
+        {/* Profile Image Section (Placeholder since image is removed) */}
         <div className="relative pt-8 pb-4">
           <div className="relative mx-auto w-28 h-28 group/avatar">
             {/* Image Glow */}
             <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full blur-md opacity-50 group-hover/avatar:opacity-80 transition-opacity duration-300"></div>
-            
-            {/* Main Image */}
-            <img
-              src={image}
-              alt={name}
-              className="relative z-10 w-full h-full object-cover rounded-full border-4 border-white/30 shadow-xl transition-transform duration-500 group-hover/avatar:scale-110"
-            />
-            
+
+            {/* Placeholder for image */}
+            <div className="relative z-10 w-full h-full object-cover rounded-full border-4 border-white/30 shadow-xl transition-transform duration-500 group-hover/avatar:scale-110 flex items-center justify-center bg-gray-700 text-white text-4xl font-bold">
+                {name.charAt(0).toUpperCase()}
+            </div>
+
             {/* Online Status with Pulse */}
             {isOnline && (
               <div className="absolute -bottom-1 -right-1 z-20">
@@ -65,10 +64,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
             )}
 
-            {/* Camera Icon Overlay */}
-            <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            {/* Camera Icon Overlay (Removed as image is removed) */}
+            {/* <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <Camera className="w-6 h-6 text-white" />
-            </div>
+            </div> */}
           </div>
 
           {/* Verified Badge */}
@@ -106,8 +105,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             </div>
           </div>
 
-          {/* Interests */}
-          <div className="space-y-3">
+          {/* Interests (Removed as interests are removed) */}
+          {/* <div className="space-y-3">
             <div className="flex items-center justify-center gap-2 text-white/70 text-sm">
               <Heart className="w-4 h-4" />
               <span className="font-medium">Interests</span>
@@ -122,7 +121,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Bottom Gradient */}
