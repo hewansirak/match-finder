@@ -37,7 +37,7 @@ function App() {
         <UserRegistration onComplete={handleRegistration} />
       )}
       {step === 'quiz' && userData && (
-        <Quiz userData={userData} onComplete={handleQuizComplete} />
+        <Quiz userId={userData.id} userData={userData} onComplete={handleQuizComplete} />
       )}
       {step === 'results' && userData && (
         <MatchResults 
