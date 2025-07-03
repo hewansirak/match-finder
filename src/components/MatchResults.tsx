@@ -1,18 +1,12 @@
 // MatchResults.tsx
 import React, { useState, useEffect } from "react";
-import {
-  Heart,
-  Sparkles,
-  RotateCcw,
-  Calendar,
-  Star,
-} from "lucide-react";
+import { Heart, Sparkles, RotateCcw, Calendar, Star } from "lucide-react";
 import type { QuizAnswers } from "../types/quiz";
 import type { UserData } from "../types/user";
 import { calculateAge, calculateZodiacSign } from "../utils/dateUtils";
 import ProfileCard from "../components/ProfileCard";
 import { findBestMatch } from "../lib/match";
-import { supabase } from '../lib/supabaseClient'; 
+import { supabase } from "../lib/supabaseClient";
 import NoMatch from "./NoMatch";
 
 interface Props {
@@ -22,7 +16,7 @@ interface Props {
 }
 
 const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
-  const [ , setShowMatch] = useState(false);
+  const [, setShowMatch] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
   const [compatibilityScore, setCompatibilityScore] = useState(0); // Will be set by actual match
   const [matchedUserData, setMatchedUserData] = useState<UserData | null>(null);
@@ -39,17 +33,24 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
         if (bestMatch && bestMatch.match_id) {
           // Fetch the full user data for the matched user
           const { data, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', bestMatch.match_id)
+            .from("users")
+            .select("*")
+            .eq("id", bestMatch.match_id)
             .single();
 
           if (error) {
-            console.error('Error fetching matched user data:', error);
+            console.error("Error fetching matched user data:", error);
             setNoMatchFound(true);
           } else if (data) {
             setMatchedUserData(data);
-            setCompatibilityScore(bestMatch.match_count * 10); 
+            let calculatedScore = 0;
+            if (bestMatch.total_current_user_answers > 0) {
+              calculatedScore = Math.round(
+                (bestMatch.match_count / bestMatch.total_current_user_answers) *
+                  100
+              );
+            }
+            setCompatibilityScore(calculatedScore);
             setShowMatch(true);
             setTimeout(() => setAnimateScore(true), 800);
           } else {
@@ -59,7 +60,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
           setNoMatchFound(true);
         }
       } catch (error) {
-        console.error('Error in finding best match:', error);
+        console.error("Error in finding best match:", error);
         setNoMatchFound(true);
       } finally {
         setLoadingMatch(false);
@@ -74,8 +75,6 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
   // Calculate ages using the utility function
   const userAge = calculateAge(userData.dob);
   const userZodiacSign = calculateZodiacSign(userData.dob);
-
-
 
   if (loadingMatch) {
     return (
@@ -105,9 +104,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
   }
 
   if (noMatchFound || !matchedUserData) {
-    return (
-      <NoMatch onReset={onReset} />
-    );
+    return <NoMatch onReset={onReset} />;
   }
 
   const matchAge = calculateAge(matchedUserData.dob);
@@ -238,7 +235,6 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
 
         {/* Action Buttons */}
         <div className="max-w-md mx-auto space-y-4">
-
           <button className="relative w-full overflow-hidden transition-all duration-300 transform border group rounded-2xl bg-white/20 backdrop-blur-md border-white/30 hover:bg-white/30 hover:scale-105">
             <div className="flex items-center justify-center gap-3 px-8 py-5 text-white">
               <Calendar className="w-6 h-6" />
