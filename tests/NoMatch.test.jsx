@@ -4,7 +4,7 @@ import { vi } from "vitest";
 import NoMatch from "../src/components/NoMatch";
 
 describe("NoMatch", () => {
-  const AKON_URL = "https://youtu.be/6EEW-9NDM5k?si=bjkiywHlQUy6F7ad";
+  const AKON_URL = "https://youtu.be/JISlh7et1w4";
   let originalOpen;
 
   beforeAll(() => {
@@ -24,10 +24,10 @@ describe("NoMatch", () => {
   it("renders the no match message and Akon link", () => {
     render(<NoMatch onReset={() => {}} />);
     expect(screen.getByText("No Match Found")).toBeInTheDocument();
-    expect(screen.getByText("Listen to Akon - Lonely")).toBeInTheDocument();
+    expect(screen.getByText("But we got a surprise for you!")).toBeInTheDocument();
     expect(screen.getByText("Try Again")).toBeInTheDocument();
 
-    const link = screen.getByRole("link", { name: /Listen to Akon/i });
+    const link = screen.getByRole("link", { name: /But we got a surprise for you!/i });
     expect(link).toHaveAttribute("href", AKON_URL);
     expect(link).toHaveAttribute("target", "_blank");
   });
