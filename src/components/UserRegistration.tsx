@@ -289,7 +289,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <div className="mt-4 text-center">
           <p className="flex items-center justify-center gap-1 text-xs text-gray-500">
             <Heart data-testid="lucide-heart" className="w-2.5 h-2.5 text-pink-400 fill-current" />
-            Love is just a click away
+            Inspired by Mister Samuel Balcha
             <Heart data-testid="lucide-heart" className="w-2.5 h-2.5 text-pink-400 fill-current" />
           </p>
         </div>

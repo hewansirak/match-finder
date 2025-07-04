@@ -9,7 +9,7 @@ const NoMatch: React.FC<Props> = ({ onReset }) => {
   useEffect(() => {
     // Auto-redirect to Akon's Lonely song
     const timer = setTimeout(() => {
-      window.open('https://youtu.be/6EEW-9NDM5k?si=bjkiywHlQUy6F7ad', '_blank');
+      window.open('https://youtu.be/JISlh7et1w4', '_blank');
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -26,13 +26,13 @@ const NoMatch: React.FC<Props> = ({ onReset }) => {
         
         <div className="space-y-4">
           <a
-            href="https://youtu.be/6EEW-9NDM5k?si=bjkiywHlQUy6F7ad"
+            href="https://youtu.be/JISlh7et1w4"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-red-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
           >
             <ExternalLink className="w-5 h-5" />
-            Listen to Akon - Lonely
+            But we got a surprise for you!
           </a>
 
           <button
@@ -45,7 +45,7 @@ const NoMatch: React.FC<Props> = ({ onReset }) => {
         </div>
 
         <p className="text-sm text-gray-400 mt-6">
-          Redirecting to Akon in 3 seconds...
+          Redirecting to Your Surprise in 3 seconds...
         </p>
       </div>
     </div>
