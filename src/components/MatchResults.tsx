@@ -110,6 +110,16 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
   const matchAge = calculateAge(matchedUserData.dob);
   const matchZodiacSign = calculateZodiacSign(matchedUserData.dob);
 
+
+  const onPlanDate = () => {
+    if (matchedUserData) {
+      const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Date%20with%20${encodeURIComponent(matchedUserData.username)}`;
+      window.open(calendarUrl, '_blank');
+    } else {
+      console.log("No matched user to plan a date with.");
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-red-500">
       {/* Animated Background Elements */}
@@ -235,7 +245,7 @@ const MatchResults: React.FC<Props> = ({ userData, onReset }) => {
 
         {/* Action Buttons */}
         <div className="max-w-md mx-auto space-y-4">
-          <button className="relative w-full overflow-hidden transition-all duration-300 transform border group rounded-2xl bg-white/20 backdrop-blur-md border-white/30 hover:bg-white/30 hover:scale-105">
+          <button onClick={onPlanDate} className="relative w-full overflow-hidden transition-all duration-300 transform border group rounded-2xl bg-white/20 backdrop-blur-md border-white/30 hover:bg-white/30 hover:scale-105">
             <div className="flex items-center justify-center gap-3 px-8 py-5 text-white">
               <Calendar className="w-6 h-6" />
               <span className="text-lg font-bold">Plan a Date</span>
