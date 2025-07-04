@@ -148,7 +148,7 @@ describe("UserRegistration UI", () => {
 
   it("renders the decorative header and footer", () => {
     expect(screen.getByText(/Find Your Match/i)).toBeInTheDocument();
-    expect(screen.getByText(/Love is just a click away/i)).toBeInTheDocument();
+    expect(screen.getByText(/Inspired by Mister Samuel Balcha/i)).toBeInTheDocument();
     expect(screen.getAllByTestId("lucide-heart").length).toBeGreaterThanOrEqual(2);
   });
 });
